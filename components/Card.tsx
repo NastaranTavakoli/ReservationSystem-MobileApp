@@ -26,5 +26,5 @@ export function Card(props: CardProps) {
 }
 
 const styles = StyleSheet.create({
-    
+
 });

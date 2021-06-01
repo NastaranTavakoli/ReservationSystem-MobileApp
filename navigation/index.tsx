@@ -16,9 +16,3 @@ export default function Navigation() {
     </NavigationContainer>
   );
 }
-
-
-
-
-
-
