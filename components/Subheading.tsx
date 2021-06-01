@@ -5,7 +5,7 @@ type SubheadingProps = {
     children: ReactNode
 }
 
-export function Title({ children }: SubheadingProps) {
+export function Subheading({ children }: SubheadingProps) {
     return (
         <PaperSubheading>{children}</PaperSubheading>
     )

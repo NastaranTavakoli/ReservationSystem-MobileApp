@@ -16,7 +16,7 @@ type TextInputProps = {
     | undefined;
 };
 
-export function Title({
+export function TextInput({
   mode = "flat",
   disabled = false,
   label,

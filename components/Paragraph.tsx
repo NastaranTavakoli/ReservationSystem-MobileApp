@@ -5,7 +5,7 @@ type ParagraphProps = {
     children: ReactNode
 }
 
-export function Title({ children }: ParagraphProps) {
+export function Paragraph({ children }: ParagraphProps) {
     return (
         <PaperParagraph>{children}</PaperParagraph>
     )

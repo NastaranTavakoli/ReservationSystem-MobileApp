@@ -7,7 +7,7 @@ type HelperTextProps = {
     type?: 'error' | 'info';
 }
 
-export function Title({ children, visible = true, type = 'info' }: HelperTextProps) {
+export function HelperText({ children, visible = true, type = 'info' }: HelperTextProps) {
     return (
         <PaperHelperText visible={visible} type={type}>{children}</PaperHelperText>
     )
