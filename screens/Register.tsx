@@ -61,7 +61,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
         JSON.stringify(userProfileResponse.data)
       );
       setLoading(false);
-      navigation.replace("Home");
+      navigation.replace("Member");
     } catch (err) {
       setLoading(false);
       if (err.response) {
