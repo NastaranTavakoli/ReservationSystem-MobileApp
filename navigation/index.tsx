@@ -1,7 +1,13 @@
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import {HomeScreen, LoginScreen, RegisterScreen} from '../screens';
+import * as React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { HomeScreen, LoginScreen, RegisterScreen } from "../screens";
+
+export type RootStackParamList = {
+  Home: undefined;
+  Login: undefined;
+  Register: undefined;
+};
 
 const Stack = createStackNavigator();
 

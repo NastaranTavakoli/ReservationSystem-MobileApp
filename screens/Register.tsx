@@ -4,11 +4,15 @@ import axios from "axios";
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, TextInput, Text } from "../components";
+import { RootStackParamList } from "../navigation";
 
-export function RegisterScreen({ navigation }: {
-  navigation: StackNavigationProp<Record<string, object | undefined>, "Register">;
-}) {
+type RegisterScreenProps = {
+  navigation: StackNavigationProp<RootStackParamList, "Register">;
+};
 
+export const RegisterScreen: React.FC<RegisterScreenProps> = ({
+  navigation,
+}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 

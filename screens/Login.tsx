@@ -4,12 +4,13 @@ import axios from "axios";
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { TextInput, Button, Text } from "../components";
+import { RootStackParamList } from "../navigation";
 
-export function LoginScreen({
-  navigation,
-}: {
-  navigation: StackNavigationProp<Record<string, object | undefined>, "Login">;
-}) {
+type LoginScreenProps = {
+  navigation: StackNavigationProp<RootStackParamList, "Login">;
+};
+
+export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
