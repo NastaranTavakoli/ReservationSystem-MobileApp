@@ -45,6 +45,10 @@ export function LoginScreen({
       navigation.replace("Home");
     } catch (err) {
       setLoading(false);
+      if (err.response) {
+        console.log(err.response);
+        setError(err.response.data[''].join('\n'));
+      }
       setError(String(err));
     }
   }
@@ -66,7 +70,7 @@ export function LoginScreen({
           Login
         </Button>
       </View>
-      <View>{error && <Text>{error}</Text>}</View>
+      <View>{error ? <Text>{error}</Text> : null}</View>
       <View style={styles.registerView}>
         <View>
           <Text>Don't have an account?</Text>

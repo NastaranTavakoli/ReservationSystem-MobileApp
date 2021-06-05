@@ -1,9 +1,13 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StackNavigationProp } from "@react-navigation/stack";
 import axios from "axios";
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { TextInput } from "../components";
+import { Button, TextInput, Text } from "../components";
 
-export function RegisterScreen({ navigation }) {
+export function RegisterScreen({ navigation }: {
+  navigation: StackNavigationProp<Record<string, object | undefined>, "Register">;
+}) {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -16,14 +20,13 @@ export function RegisterScreen({ navigation }) {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   async function register() {
+    setLoading(true);
     try {
       if (!firstName || !lastName || !email || !phone || !password || !confirmPassword) {
-        setError('Please fill out each field');
-        return;
+        throw 'Please fill out each field';
       }
       if (password !== confirmPassword) {
-        setError('Passwords do not match');
-        return;
+        throw 'Passwords do not match'
       }
       const registerResponse = await axios.post('https://localhost:44336/api/accounts/register', {
         firstName,
@@ -34,21 +37,83 @@ export function RegisterScreen({ navigation }) {
         confirmPassword
       });
       if (registerResponse.status != 200) {
-        console.log(registerResponse);
+        console.log("This gets run");
         throw registerResponse.statusText;
       }
       const token = registerResponse.data.token;
-      
+      await AsyncStorage.setItem("authToken", `Bearer ${token}`);
+      const tokenFromStorage = await AsyncStorage.getItem("authToken");
+      const userProfileResponse = await axios.get(
+        "https://localhost:44336/api/accounts",
+        {
+          headers: {
+            Authorization: tokenFromStorage,
+          },
+          withCredentials: true,
+        }
+      );
+      await AsyncStorage.setItem(
+        "user",
+        JSON.stringify(userProfileResponse.data)
+      );
+      setLoading(false);
+      navigation.replace("Home");
     } catch (err) {
-      console.log(err);
-      setError(String(err));
+      setLoading(false);
+      if (err.response) {
+        console.log(err.response.data);
+        setError(err.response.data[''].join('\n'));
+      } else {
+        setError(String(err));
+      }
     }    
   }
 
   return (
     <View style={styles.container}>
-      <View>
-        <TextInput />
+      <View style={styles.inputContainer}>
+        <TextInput label="Email" value={email} onChangeText={setEmail} />
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput label="First Name" value={firstName} onChangeText={setFirstName} />
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput label="Last Name" value={lastName} onChangeText={setLastName} />
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput label="Phone" value={phone} onChangeText={setPhone} />
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          label="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          label="Confirm Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button mode="outlined" onPress={register} loading={loading}>
+          Register
+        </Button>
+      </View>
+      <View>{error ? <Text>{error}</Text> : null}</View>
+      <View style={styles.loginView}>
+        <View>
+          <Text>Already have an account?</Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button onPress={() => navigation.push("Login")}>
+            Login here.
+          </Button>
+        </View>
       </View>
     </View>
   );
@@ -60,4 +125,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  inputContainer: {
+    marginVertical: 5,
+  },
+  buttonContainer: {
+    marginVertical: 5,
+  },
+  loginView: {
+    marginTop: 10
+  }
 });
