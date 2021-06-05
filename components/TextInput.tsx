@@ -14,28 +14,19 @@ type TextInputProps = {
     | (((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) &
         ((args: any) => void))
     | undefined;
+  secureTextEntry?: boolean;
 };
 
 export function TextInput({
   mode = "flat",
   disabled = false,
-  label,
-  placeholder,
-  multiline,
-  value,
-  onBlur,
-  onChangeText,
+  ...props
 }: TextInputProps) {
   return (
     <PaperTextInput
       mode={mode}
       disabled={disabled}
-      label={label}
-      placeholder={placeholder}
-      multiline={multiline}
-      value={value}
-      onBlur={onBlur}
-      onChangeText={onChangeText}
+      {...props}
     />
   );
 }
