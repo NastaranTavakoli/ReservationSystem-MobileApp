@@ -1,11 +1,21 @@
-import React from 'react';
-import Navigation from './navigation';
-import { Provider as PaperProvider } from 'react-native-paper';
+import React from "react";
+import Navigation from "./navigation";
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+
+const theme = {
+  ...DefaultTheme,
+  roundness: 2,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "#3498db",
+    accent: "#f1c40f",
+  },
+};
 
 export default function App() {
-    return (
-        <PaperProvider>
-            <Navigation/>
-        </PaperProvider>
-    );
+  return (
+    <PaperProvider theme={theme}>
+      <Navigation />
+    </PaperProvider>
+  );
 }

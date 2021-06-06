@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { View, Button, Platform } from "react-native";
+import { View, Platform } from "react-native";
+import { Button } from "./Button";
 import DateTimePickerCommunity from "@react-native-community/datetimepicker";
 
 type DateTimePickerProps = {
@@ -24,7 +25,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   return (
     <View>
       <View>
-        <Button onPress={() => setShow(true)} title={`Show ${mode} picker!`} />
+        <Button mode="text" onPress={() => setShow(true)}>
+          {`select ${mode}`}
+        </Button>
       </View>
       {show && (
         <DateTimePickerCommunity
