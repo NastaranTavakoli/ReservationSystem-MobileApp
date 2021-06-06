@@ -11,7 +11,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type MemberScreenProps = {
-  navigation: StackNavigationProp<RootStackParamList, "Home">;
+  navigation: StackNavigationProp<RootStackParamList, "Member">;
 };
 
 export const MemberScreen: React.FC<MemberScreenProps> = ({ navigation }) => {

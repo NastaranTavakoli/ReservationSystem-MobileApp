@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
@@ -17,7 +18,15 @@ type HomeScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, "Home">;
 };
 
-type Restaurant = {
+export type User = {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  email: string;
+  phone: string;
+};
+
+export type Restaurant = {
   id: number;
   name: string;
   address: string;
@@ -27,6 +36,7 @@ type Restaurant = {
 };
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
   const [guestsNumber, setGuestsNumber] = useState("2");
@@ -35,6 +45,26 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     Restaurant[]
   >([]);
   const [recentRestaurants, setRecentRestaurants] = useState<Restaurant[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const tokenFromStorage = await AsyncStorage.getItem("authToken");
+
+        const { data } = await axios.get(
+          "https://nastaran.azurewebsites.net/api/accounts",
+          {
+            headers: {
+              Authorization: tokenFromStorage,
+            },
+            withCredentials: true,
+          }
+        );
+
+        setCurrentUser(data);
+      } catch (err) {}
+    })();
+  }, []);
 
   useEffect(() => {
     axios
@@ -68,9 +98,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         btnTitle="Make a reservation"
         onPress={() =>
           navigation.navigate("Restaurant", {
-            id,
             date,
             guestsNumber: parseInt(guestsNumber),
+            restaurant: item,
+            currentUser,
           })
         }
       />

@@ -7,6 +7,9 @@ import {
   RegisterScreen,
   MemberScreen,
   RestaurantScreen,
+  BookingScreen,
+  Restaurant,
+  User,
 } from "../screens";
 
 export type RootStackParamList = {
@@ -14,7 +17,19 @@ export type RootStackParamList = {
   Login: undefined;
   Member: undefined;
   Register: undefined;
-  Restaurant: { date: Date; guestsNumber: number; id: number };
+  Restaurant: {
+    currentUser: User | null;
+    date: Date;
+    guestsNumber: number;
+    restaurant: Restaurant;
+  };
+  Booking: {
+    currentUser: User | null;
+    sittingId: number;
+    guests: number;
+    selectedDate: Date;
+    selectedTime: string;
+  };
 };
 
 const Stack = createStackNavigator();
@@ -28,6 +43,7 @@ export default function Navigation() {
         <Stack.Screen name="Member" component={MemberScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Restaurant" component={RestaurantScreen} />
+        <Stack.Screen name="Booking" component={BookingScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -20,7 +20,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     try {
       setLoading(true);
       const loginResponse = await axios.post(
-        "https://localhost:44336/api/accounts/login",
+        "https://nastaran.azurewebsites.net/api/accounts/login",
         {
           email,
           password,
@@ -30,7 +30,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       await AsyncStorage.setItem("authToken", `Bearer ${token}`);
       const tokenFromStorage = await AsyncStorage.getItem("authToken");
       const userProfileResponse = await axios.get(
-        "https://localhost:44336/api/accounts",
+        "https://nastaran.azurewebsites.net/api/accounts",
         {
           headers: {
             Authorization: tokenFromStorage,
@@ -48,7 +48,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       setLoading(false);
       if (err.response) {
         console.log(err.response);
-        setError(err.response.data[''].join('\n'));
+        setError(err.response.data[""].join("\n"));
       }
       setError(String(err));
     }
@@ -84,7 +84,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -99,6 +99,6 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   registerView: {
-    marginTop: 10
-  }
+    marginTop: 10,
+  },
 });

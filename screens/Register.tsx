@@ -14,32 +14,42 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   navigation,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   async function register() {
     setLoading(true);
     try {
-      if (!firstName || !lastName || !email || !phone || !password || !confirmPassword) {
-        throw 'Please fill out each field';
+      if (
+        !firstName ||
+        !lastName ||
+        !email ||
+        !phone ||
+        !password ||
+        !confirmPassword
+      ) {
+        throw "Please fill out each field";
       }
       if (password !== confirmPassword) {
-        throw 'Passwords do not match'
+        throw "Passwords do not match";
       }
-      const registerResponse = await axios.post('https://localhost:44336/api/accounts/register', {
-        firstName,
-        lastName,
-        email,
-        phone,
-        password,
-        confirmPassword
-      });
+      const registerResponse = await axios.post(
+        "https://nastaran.azurewebsites.net/api/accounts/register",
+        {
+          firstName,
+          lastName,
+          email,
+          phone,
+          password,
+          confirmPassword,
+        }
+      );
       if (registerResponse.status != 200) {
         console.log("This gets run");
         throw registerResponse.statusText;
@@ -48,7 +58,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
       await AsyncStorage.setItem("authToken", `Bearer ${token}`);
       const tokenFromStorage = await AsyncStorage.getItem("authToken");
       const userProfileResponse = await axios.get(
-        "https://localhost:44336/api/accounts",
+        "https://nastaran.azurewebsites.net/api/accounts",
         {
           headers: {
             Authorization: tokenFromStorage,
@@ -66,11 +76,11 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
       setLoading(false);
       if (err.response) {
         console.log(err.response.data);
-        setError(err.response.data[''].join('\n'));
+        setError(err.response.data[""].join("\n"));
       } else {
         setError(String(err));
       }
-    }    
+    }
   }
 
   return (
@@ -79,10 +89,18 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
         <TextInput label="Email" value={email} onChangeText={setEmail} />
       </View>
       <View style={styles.inputContainer}>
-        <TextInput label="First Name" value={firstName} onChangeText={setFirstName} />
+        <TextInput
+          label="First Name"
+          value={firstName}
+          onChangeText={setFirstName}
+        />
       </View>
       <View style={styles.inputContainer}>
-        <TextInput label="Last Name" value={lastName} onChangeText={setLastName} />
+        <TextInput
+          label="Last Name"
+          value={lastName}
+          onChangeText={setLastName}
+        />
       </View>
       <View style={styles.inputContainer}>
         <TextInput label="Phone" value={phone} onChangeText={setPhone} />
@@ -114,14 +132,12 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
           <Text>Already have an account?</Text>
         </View>
         <View style={styles.buttonContainer}>
-          <Button onPress={() => navigation.push("Login")}>
-            Login here.
-          </Button>
+          <Button onPress={() => navigation.push("Login")}>Login here.</Button>
         </View>
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -136,6 +152,6 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   loginView: {
-    marginTop: 10
-  }
+    marginTop: 10,
+  },
 });

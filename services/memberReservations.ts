@@ -5,7 +5,7 @@ export async function getAllReservations() {
   const config = {
     headers: { Authorization: await AsyncStorage.getItem("authToken")}
   };
-  return await axios.get('https://localhost:44336/api/member/reservations', config)
+  return await axios.get('https://nastaran.azurewebsites.net/api/member/reservations', config)
     .then(response => {
       return response.data;
     }).catch(error => {
@@ -17,7 +17,7 @@ export async function getReservationById(id: number) {
   const config = {
     headers: { Authorization: await AsyncStorage.getItem("authToken")}
   };
-  return await axios.get(`https://localhost:44336/api/member/reservations/${id}`, config)
+  return await axios.get(`https://nastaran.azurewebsites.net/api/member/reservations/${id}`, config)
     .then(response => {
       return response.data;
     }).catch(error => {

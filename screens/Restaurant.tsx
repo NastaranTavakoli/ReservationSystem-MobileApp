@@ -6,17 +6,25 @@ import {
   View,
   Text,
   StyleSheet,
-  Button,
   TextInput,
   FlatList,
   SafeAreaView,
 } from "react-native";
-import { DateTimePicker, SearchBar, Card } from "../components";
+import { DateTimePicker, Button } from "../components";
 import { RootStackParamList } from "../navigation";
 
 type RestaurantScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, "Restaurant">;
   route: RouteProp<RootStackParamList, "Restaurant">;
+};
+
+type Availability = {
+  startTime: string;
+  sittingStartTime: string;
+  sittingEndTime: string;
+  description: string;
+  name: string;
+  id: number;
 };
 
 export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
@@ -25,37 +33,69 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
 }) => {
   const {
     date: passedDate,
-    id,
     guestsNumber: passedGuestsNumber,
+    restaurant: { id, name, address, phone, email },
+    currentUser,
   } = route.params;
 
   const [date, setDate] = useState(passedDate);
   const [guestsNumber, setGuestsNumber] = useState(
     passedGuestsNumber.toString()
   );
+  const [availabilities, setAvailabilities] = useState<Availability[]>([]);
 
   useEffect(() => {
-    // axios
-    //   .get("https://nastaran.azurewebsites.net/api/restaurants", {
-    //     params: {
-    //       SearchValue: searchTerm,
-    //       Date: "07/06/21", //date.toLocaleDateString(),
-    //       Time: "9:0", //`${time.getHours()}:${time.getMinutes()}`,
-    //       Guests: guestsNumber,
-    //       PageNumber: 1,
-    //     },
-    //   })
-    //   .then(({ data }) => {
-    //     setAvailableRestaurants(data.availableRestaurantsToShow);
-    //     setRecentRestaurants(data.recentRestaurants);
-    //   })
-    //   .catch((err) => {});
+    axios
+      .get(
+        `https://nastaran.azurewebsites.net/api/restaurants/${id}/availabilities`,
+        {
+          params: {
+            SelectedDate: "07/06/21", //date.toLocaleDateString(),
+            Guests: guestsNumber,
+            Duration: 90,
+          },
+        }
+      )
+      .then(({ data }) => {
+        setAvailabilities(data);
+      })
+      .catch((err) => {});
   }, [date, guestsNumber]);
+
+  const renderItem = ({ item }: { item: Availability }) => {
+    const {
+      startTime,
+      sittingStartTime,
+      sittingEndTime,
+      description,
+      name,
+      id,
+    } = item;
+    return (
+      <Button
+        mode="contained"
+        onPress={() => {
+          navigation.navigate("Booking", {
+            sittingId: id,
+            guests: parseInt(guestsNumber),
+            selectedDate: date,
+            selectedTime: new Date(startTime).toLocaleTimeString(),
+            currentUser,
+          });
+        }}
+      >
+        <Text>{new Date(startTime).toLocaleTimeString()}</Text>
+      </Button>
+    );
+  };
 
   return (
     <View style={styles.container}>
       <View>
-        <Text>Details</Text>
+        <Text>{name}</Text>
+        <Text>{address}</Text>
+        <Text>{phone}</Text>
+        <Text>{email}</Text>
         <DateTimePicker mode="date" initialValue={date} setValue={setDate} />
         <TextInput
           value={guestsNumber}
@@ -66,6 +106,13 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
         <Text>{date.toLocaleDateString()}</Text>
         <Text>{guestsNumber}</Text>
       </View>
+      <SafeAreaView>
+        <FlatList
+          data={availabilities}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      </SafeAreaView>
     </View>
   );
 };
