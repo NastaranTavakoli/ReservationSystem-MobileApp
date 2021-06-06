@@ -43,6 +43,7 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
     passedGuestsNumber.toString()
   );
   const [availabilities, setAvailabilities] = useState<Availability[]>([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     axios
@@ -58,8 +59,19 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
       )
       .then(({ data }) => {
         setAvailabilities(data);
+        setError("");
       })
-      .catch((err) => {});
+      .catch((err) => {
+        if (err.response) {
+          if (err.response.data) {
+            setError(err.response.data.title);
+          } else {
+            setError("Something went wrong");
+          }
+        } else {
+          setError("Check the network connection");
+        }
+      });
   }, [date, guestsNumber]);
 
   const renderItem = ({ item }: { item: Availability }) => {
@@ -107,13 +119,17 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
         <Text>{date.toLocaleDateString()}</Text>
         <Text>{guestsNumber}</Text>
       </View>
-      <SafeAreaView>
-        <FlatList
-          data={availabilities}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-        />
-      </SafeAreaView>
+      {error ? (
+        <Text>{error}</Text>
+      ) : (
+        <SafeAreaView>
+          <FlatList
+            data={availabilities}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+          />
+        </SafeAreaView>
+      )}
     </View>
   );
 };

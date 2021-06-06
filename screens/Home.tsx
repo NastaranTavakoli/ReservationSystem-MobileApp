@@ -6,7 +6,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Button,
   TextInput,
   FlatList,
   SafeAreaView,
@@ -45,6 +44,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     Restaurant[]
   >([]);
   const [recentRestaurants, setRecentRestaurants] = useState<Restaurant[]>([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -80,8 +80,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       .then(({ data }) => {
         setAvailableRestaurants(data.availableRestaurantsToShow);
         setRecentRestaurants(data.recentRestaurants);
+        setError("");
       })
-      .catch((err) => {});
+      .catch((err) => {
+        if (err.response) {
+          if (err.response.data) {
+            setError(err.response.data.title);
+          } else {
+            setError("Something went wrong");
+          }
+        } else {
+          setError("Check the network connection");
+        }
+      });
   }, [date, time, guestsNumber, searchTerm]);
 
   const renderItem = ({ item }: { item: Restaurant }) => {
@@ -130,21 +141,27 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         <Text>{date.toLocaleDateString()}</Text>
         <Text>{`${time.getHours()}:${time.getMinutes()}`}</Text>
         <Text>{guestsNumber}</Text>
-        <SafeAreaView>
-          <FlatList
-            data={availableRestaurants}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </SafeAreaView>
-        <Text>Recently-added Restaurants:</Text>
-        <SafeAreaView>
-          <FlatList
-            data={recentRestaurants}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </SafeAreaView>
+        {error ? (
+          <Text>{error}</Text>
+        ) : (
+          <>
+            <SafeAreaView>
+              <FlatList
+                data={availableRestaurants}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id.toString()}
+              />
+            </SafeAreaView>
+            <Text>Recently-added Restaurants:</Text>
+            <SafeAreaView>
+              <FlatList
+                data={recentRestaurants}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id.toString()}
+              />
+            </SafeAreaView>
+          </>
+        )}
       </View>
     </View>
   );

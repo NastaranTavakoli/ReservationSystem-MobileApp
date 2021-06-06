@@ -34,6 +34,7 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
   const [notes, setNotes] = useState("");
   const [visible, setVisible] = useState(false);
   const [booking, setBooking] = useState<Booking | null>(null);
+  const [error, setError] = useState("");
 
   const onCreateReservation = () => {
     axios
@@ -50,8 +51,19 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
       .then(({ data }) => {
         setBooking(data);
         setVisible(true);
+        setError("");
       })
-      .catch((err) => {});
+      .catch((err) => {
+        if (err.response) {
+          if (err.response.data) {
+            setError(err.response.data.title);
+          } else {
+            setError("Something went wrong");
+          }
+        } else {
+          setError("Check the network connection");
+        }
+      });
   };
 
   const hideModal = () => {
@@ -96,6 +108,7 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
           </Button>
         </View>
       </View>
+      {error && <Text>{error}</Text>}
       {booking && (
         <Dialog
           visible={visible}
