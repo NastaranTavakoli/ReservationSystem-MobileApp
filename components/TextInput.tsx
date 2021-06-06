@@ -9,6 +9,7 @@ type TextInputProps = {
   placeholder?: string;
   multiline?: boolean;
   value?: string;
+  editable?: boolean;
   onChangeText?: (((text: string) => void) & Function) | undefined;
   onBlur?:
     | (((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) &

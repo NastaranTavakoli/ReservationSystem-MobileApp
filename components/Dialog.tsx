@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children, ReactNode } from 'react';
 import { Button, Dialog as PaperDialog } from 'react-native-paper'
 import { Paragraph } from './Paragraph';
 
@@ -6,21 +6,16 @@ type dialogProps = {
   visible: boolean,
   onDismiss?(): void,
   title?: string,
-  paragraph: string,
-  onPress?(): void,
-  text?: string,
+  children?: ReactNode | ReactNode[]
 }
 
 export function Dialog(props: dialogProps) {
-  const { visible, onDismiss, title, paragraph, onPress, text } = props;
+  const { children, visible, onDismiss, title } = props;
   return (
     <PaperDialog visible={visible} onDismiss={onDismiss}>
       <PaperDialog.Title>{title}</PaperDialog.Title>
       <PaperDialog.Content>
-        <Paragraph>{paragraph}</Paragraph>
-        <PaperDialog.Actions>
-          <Button onPress={onPress}>{text}</Button>
-        </PaperDialog.Actions>
+        {children}
       </PaperDialog.Content>
     </PaperDialog>
   )
