@@ -10,7 +10,7 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
-import { DateTimePicker, Button } from "../components";
+import { DateTimePicker, Button, UserStatus } from "../components";
 import { RootStackParamList } from "../navigation";
 
 type RestaurantScreenProps = {
@@ -91,6 +91,7 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
 
   return (
     <View style={styles.container}>
+      <UserStatus currentUser={currentUser} navigation={navigation} />
       <View>
         <Text>{name}</Text>
         <Text>{address}</Text>

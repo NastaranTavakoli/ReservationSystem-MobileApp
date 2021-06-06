@@ -11,7 +11,7 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
-import { DateTimePicker, SearchBar, Card } from "../components";
+import { DateTimePicker, SearchBar, Card, UserStatus } from "../components";
 import { RootStackParamList } from "../navigation";
 
 type HomeScreenProps = {
@@ -110,7 +110,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Button title="Login" onPress={() => navigation.navigate("Login")} />
+      <UserStatus currentUser={currentUser} navigation={navigation} />
       <View>
         <Text>Make a reservation now</Text>
         <DateTimePicker mode="date" initialValue={date} setValue={setDate} />

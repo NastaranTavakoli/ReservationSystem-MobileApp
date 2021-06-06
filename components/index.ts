@@ -13,3 +13,4 @@ export * from './SearchBar';
 export * from './PickerView';
 export * from './Card';
 export * from './Dialog';
+export * from './UserStatus';

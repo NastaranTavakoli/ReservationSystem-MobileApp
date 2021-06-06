@@ -4,7 +4,7 @@ import axios from "axios";
 import moment from "moment";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput } from "react-native";
-import { Button, Dialog } from "../components";
+import { Button, Dialog, UserStatus } from "../components";
 import { RootStackParamList } from "../navigation";
 
 type BookingScreenProps = {
@@ -61,6 +61,7 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
 
   return (
     <View style={styles.container}>
+      <UserStatus currentUser={currentUser} navigation={navigation} />
       <View>
         <View style={styles.inputContainer}>
           <TextInput
