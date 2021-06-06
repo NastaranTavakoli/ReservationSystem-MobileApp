@@ -12,3 +12,4 @@ export * from './FloatingButton';
 export * from './SearchBar';
 export * from './PickerView';
 export * from './Card';
+export * from './Dialog';

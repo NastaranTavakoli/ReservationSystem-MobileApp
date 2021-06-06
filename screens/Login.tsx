@@ -43,7 +43,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
         JSON.stringify(userProfileResponse.data)
       );
       setLoading(false);
-      navigation.replace("Home");
+      navigation.replace("Member");
     } catch (err) {
       setLoading(false);
       if (err.response) {
