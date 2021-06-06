@@ -40,7 +40,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
         throw "Passwords do not match";
       }
       const registerResponse = await axios.post(
-        "https://nastaran.azurewebsites.net/api/accounts/register",
+        "https://localhost:44336/api/accounts/register",
         {
           firstName,
           lastName,
@@ -58,7 +58,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
       await AsyncStorage.setItem("authToken", `Bearer ${token}`);
       const tokenFromStorage = await AsyncStorage.getItem("authToken");
       const userProfileResponse = await axios.get(
-        "https://nastaran.azurewebsites.net/api/accounts",
+        "https://localhost:44336/api/accounts",
         {
           headers: {
             Authorization: tokenFromStorage,

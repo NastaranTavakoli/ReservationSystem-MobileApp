@@ -20,7 +20,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     try {
       setLoading(true);
       const loginResponse = await axios.post(
-        "https://nastaran.azurewebsites.net/api/accounts/login",
+        "https://localhost:44336/api/accounts/login",
         {
           email,
           password,
@@ -30,7 +30,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       await AsyncStorage.setItem("authToken", `Bearer ${token}`);
       const tokenFromStorage = await AsyncStorage.getItem("authToken");
       const userProfileResponse = await axios.get(
-        "https://nastaran.azurewebsites.net/api/accounts",
+        "https://localhost:44336/api/accounts",
         {
           headers: {
             Authorization: tokenFromStorage,
