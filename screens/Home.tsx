@@ -10,7 +10,6 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
-import { Button } from "react-native-paper";
 import { DateTimePicker, SearchBar, Card, UserStatus } from "../components";
 import { RootStackParamList } from "../navigation";
 
@@ -61,7 +60,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       .get("https://localhost:44336/api/restaurants", {
         params: {
           SearchValue: searchTerm,
-          Date: "07/06/21", //date.toLocaleDateString(),
+          Date: "08/06/21", //date.toLocaleDateString(),
           Time: "9:0", //`${time.getHours()}:${time.getMinutes()}`,
           Guests: guestsNumber,
           PageNumber: 1,
