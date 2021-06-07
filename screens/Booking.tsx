@@ -38,7 +38,7 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
 
   const onCreateReservation = () => {
     axios
-      .post(`https://nastaran.azurewebsites.net/api/reservations`, {
+      .post(`https://localhost:44336/api/reservations`, {
         firstName,
         lastName,
         email,
@@ -114,17 +114,15 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
           visible={visible}
           onDismiss={hideModal}
           title={`Reservation for restaurant ${booking.name}`}
-          paragraph={`
-          Date and Time: ${moment(booking.startTime).format(
-            "Do MMM YYYY, h:mm a"
-          )}\n
-          Guests: ${booking.guests}\n
-          Name: ${booking.fullName}\n
-          Confirmation Code: ${booking.confirmationCode}\n
-          `}
-          onPress={hideModal}
-          text="Done"
-        ></Dialog>
+        >
+          <Text>
+            Date and Time:{" "}
+            {moment(booking.startTime).format("Do MMM YYYY, h:mm a")}
+          </Text>
+          <Text>Guests: {booking.guests}</Text>
+          <Text>Name: {booking.fullName}</Text>
+          <Text>Confirmation Code: {booking.confirmationCode}</Text>
+        </Dialog>
       )}
     </View>
   );

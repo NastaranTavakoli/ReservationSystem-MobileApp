@@ -51,7 +51,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
         }
       );
       if (registerResponse.status != 200) {
-        console.log("This gets run");
         throw registerResponse.statusText;
       }
       const token = registerResponse.data.token;
@@ -71,7 +70,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
         JSON.stringify(userProfileResponse.data)
       );
       setLoading(false);
-      navigation.replace("Member");
+      navigation.replace("Home");
     } catch (err) {
       setLoading(false);
       if (err.response) {

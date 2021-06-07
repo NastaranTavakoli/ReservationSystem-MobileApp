@@ -1,6 +1,7 @@
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import axios from "axios";
+import moment from "moment";
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -47,16 +48,13 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
 
   useEffect(() => {
     axios
-      .get(
-        `https://nastaran.azurewebsites.net/api/restaurants/${id}/availabilities`,
-        {
-          params: {
-            SelectedDate: "07/06/21", //date.toLocaleDateString(),
-            Guests: guestsNumber,
-            Duration: 90,
-          },
-        }
-      )
+      .get(`https://localhost:44336/api/restaurants/${id}/availabilities`, {
+        params: {
+          SelectedDate: "07/06/21", //date.toLocaleDateString(),
+          Guests: guestsNumber,
+          Duration: 90,
+        },
+      })
       .then(({ data }) => {
         setAvailabilities(data);
         setError("");
@@ -91,12 +89,12 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
             sittingId: id,
             guests: parseInt(guestsNumber),
             selectedDate: date,
-            selectedTime: new Date(startTime).toLocaleTimeString(),
+            selectedTime: moment(new Date(startTime)).format("HH:mm:ss"),
             currentUser,
           });
         }}
       >
-        <Text>{new Date(startTime).toLocaleTimeString()}</Text>
+        <Text>{moment(new Date(startTime)).format("HH:mm A")}</Text>
       </Button>
     );
   };
@@ -126,7 +124,7 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
           <FlatList
             data={availabilities}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.startTime}
           />
         </SafeAreaView>
       )}

@@ -49,29 +49,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   useEffect(() => {
     (async () => {
       try {
-        const tokenFromStorage = await AsyncStorage.getItem("authToken");
-
-        const { data } = await axios.get(
-          "https://nastaran.azurewebsites.net/api/accounts",
-          {
-            headers: {
-              Authorization: tokenFromStorage,
-            },
-            withCredentials: true,
-          }
-        );
-
-        setCurrentUser(data);
+        const user = await AsyncStorage.getItem("user");
+        setCurrentUser(user ? JSON.parse(user) : null);
       } catch (err) {}
     })();
   }, []);
 
   useEffect(() => {
     axios
-      .get("https://nastaran.azurewebsites.net/api/restaurants", {
+      .get("https://localhost:44336/api/restaurants", {
         params: {
           SearchValue: searchTerm,
-          Date: "07/06/21", //date.toLocaleDateString(),
+          Date: "08/06/21", //date.toLocaleDateString(),
           Time: "9:0", //`${time.getHours()}:${time.getMinutes()}`,
           Guests: guestsNumber,
           PageNumber: 1,
