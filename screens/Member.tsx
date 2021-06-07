@@ -4,7 +4,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { List } from 'react-native-paper';
 import moment from 'moment';
 
-import { ActivityIndicator, Button, Dialog, Paragraph, TextInput } from '../components';
+import { ActivityIndicator, Button, DateTimePicker, Dialog, Paragraph, TextInput } from '../components';
 import { getAllReservations, getReservationById, requestUpdate } from '../services/memberReservations';
 import { RootStackParamList } from "../navigation";
 

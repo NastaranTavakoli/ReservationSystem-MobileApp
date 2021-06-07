@@ -1,6 +1,5 @@
-import React, { Children, ReactNode } from 'react';
-import { Button, Dialog as PaperDialog } from 'react-native-paper'
-import { Paragraph } from './Paragraph';
+import React, { ReactNode } from 'react';
+import { Dialog as PaperDialog } from 'react-native-paper'
 
 type dialogProps = {
   visible: boolean,

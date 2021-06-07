@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { NativeSyntheticEvent, TextInputFocusEventData } from "react-native";
+import { NativeSyntheticEvent, StyleSheet, TextInputFocusEventData } from "react-native";
 import { TextInput as PaperTextInput } from "react-native-paper";
 
 type TextInputProps = {
@@ -25,9 +25,16 @@ export function TextInput({
 }: TextInputProps) {
   return (
     <PaperTextInput
+      style={styles.input}
       mode={mode}
       disabled={disabled}
       {...props}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  input: {
+    width: 300,
+  },
+});
