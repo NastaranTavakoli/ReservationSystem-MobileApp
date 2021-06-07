@@ -38,7 +38,7 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
 
   const onCreateReservation = () => {
     axios
-      .post(`https://nastaran.azurewebsites.net/api/reservations`, {
+      .post(`https://localhost:44336/api/reservations`, {
         firstName,
         lastName,
         email,
