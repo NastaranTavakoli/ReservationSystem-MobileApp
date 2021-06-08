@@ -38,5 +38,6 @@ export function TextInput({
 const styles = StyleSheet.create({
   input: {
     width: 280,
+    maxHeight: 60,
   },
 });

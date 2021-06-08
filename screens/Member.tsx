@@ -9,6 +9,7 @@ import { getAllReservations, getReservationById, requestUpdate } from '../servic
 import { RootStackParamList } from "../navigation";
 
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { ScrollView } from 'react-native-gesture-handler';
 
 type Reservation = {
   duration: number;
@@ -80,7 +81,6 @@ export const MemberScreen: React.FC<MemberScreenProps> = ({ navigation }) => {
 
   const detailsOnPress = (id: number) => {
     getReservationById(id).then((data: Reservation) => {
-      console.log(data)
       setDetails(data);
       setDuration(data.duration.toString());
       setEmail(data.email);
@@ -104,28 +104,25 @@ export const MemberScreen: React.FC<MemberScreenProps> = ({ navigation }) => {
           title={`Reservation for ${props.restaurantName}`} 
         >
             <Subheading>Date Time: {moment(startTime).format('DD/MM/YYYY hh:mm a')}</Subheading>
-            <View style={{flexDirection: 'row',}}>
+            <View style={styles.changeDateTimeBtnContainer}>
               <Button onPress={showDatepicker}>Change Date</Button>
               <Button onPress={showTimepicker}>Change Time</Button>
             </View>
             {show && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={startTime}
-                mode={mode}
-                is24Hour={true}
-                display="default"
-                onChange={onChange}
-              />
+              <DateTimePicker testID="dateTimePicker" value={startTime} mode={mode} is24Hour={true} display="default" onChange={onChange} />
             )}
             <TextInput label="Duration" placeholder='Duration' value={duration} onChangeText={setDuration}/>
             <TextInput label="Guests" placeholder='Guests' value={guests} onChangeText={setGuests}/>
             <TextInput label="Email" placeholder='Email' value={email} onChangeText={setEmail}/>
             <TextInput label="Phone" placeholder='Phone' value={phone} onChangeText={setPhone}/>
-            <TextInput label="Notes" placeholder='Notes' editable={false} multiline={true} value={notes}/>
-            <Button mode="outlined" onPress={() => setVisible(false)}>Done</Button>
-            <Button mode="outlined" onPress={() => requestOnPress("update")}>Request Update</Button>
-            <Button mode="outlined" onPress={() => requestOnPress("cancel")}>Request Cancellation</Button>
+            <ScrollView>
+              <TextInput label="Notes" placeholder='Notes' editable={false} multiline={true} value={notes}/>
+            </ScrollView>
+            <View style={styles.btnContainer}>
+              <Button mode="outlined" onPress={() => setVisible(false)}>Done</Button>
+              <Button mode="contained" onPress={() => requestOnPress("update")}>Request Update</Button>
+              <Button mode="contained" onPress={() => requestOnPress("cancel")}>Request Cancellation</Button>
+            </View>
         </Dialog>
       )
     }
@@ -137,7 +134,7 @@ export const MemberScreen: React.FC<MemberScreenProps> = ({ navigation }) => {
           title={`Reservation for ${props.restaurantName}`}
         >
           <Paragraph>{`Date: ${moment(props.startTime).format('Do MMM YYYY, h:mm a')}\nDuration: ${props.duration}\nGuests: ${props.guests}\nEmail: ${props.email}\nPhone: ${props.phone}`}</Paragraph>
-          <Button onPress={() => setVisible(false)}>Done</Button>
+          <Button mode="outlined" onPress={() => setVisible(false)}>Done</Button>
         </Dialog>
       )
     }
@@ -163,19 +160,27 @@ export const MemberScreen: React.FC<MemberScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Button mode='outlined' onPress={() => console.log("Book Now button pressed.")}>Book Now</Button>
-      <List.Accordion title="Upcoming Reservations" expanded={expanded} onPress={() => setExpanded(!expanded)}>
-        { loading ? <ActivityIndicator /> : renderReservations(nextReservations) }
-      </List.Accordion>
-      <List.Accordion title="Past Reservations">
-        { loading ? <ActivityIndicator /> : renderReservations(pastReservations) }
-      </List.Accordion>
+      <Button mode='contained' onPress={() => navigation.replace("Home")}>Book Now!</Button>
+      <ScrollView>
+        <List.Accordion title="Upcoming Reservations" expanded={expanded} onPress={() => setExpanded(!expanded)}>
+          { loading ? <ActivityIndicator /> : renderReservations(nextReservations) }
+        </List.Accordion>
+        <List.Accordion title="Past Reservations">
+          { loading ? <ActivityIndicator /> : renderReservations(pastReservations) }
+        </List.Accordion>
+      </ScrollView>
       { renderReservation(details) }
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  btnContainer: {
+    alignItems: 'stretch',
+  },
+  changeDateTimeBtnContainer: {
+    flexDirection: 'row',
+  },
   container: {
     flex: 1,
   },
