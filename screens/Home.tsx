@@ -1,7 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StackNavigationProp } from "@react-navigation/stack";
-import axios from "axios";
-import React, { useState, useEffect } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackNavigationProp } from '@react-navigation/stack';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,12 +9,13 @@ import {
   TextInput,
   FlatList,
   SafeAreaView,
-} from "react-native";
-import { DateTimePicker, SearchBar, Card, UserStatus } from "../components";
-import { RootStackParamList } from "../navigation";
+  ScrollView,
+} from 'react-native';
+import { DateTimePicker, SearchBar, Card, UserStatus } from '../components';
+import { RootStackParamList } from '../navigation';
 
 type HomeScreenProps = {
-  navigation: StackNavigationProp<RootStackParamList, "Home">;
+  navigation: StackNavigationProp<RootStackParamList, 'Home'>;
 };
 
 export type User = {
@@ -38,18 +39,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
-  const [guestsNumber, setGuestsNumber] = useState("2");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [guestsNumber, setGuestsNumber] = useState('2');
+  const [searchTerm, setSearchTerm] = useState('');
   const [availableRestaurants, setAvailableRestaurants] = useState<
     Restaurant[]
   >([]);
   const [recentRestaurants, setRecentRestaurants] = useState<Restaurant[]>([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   useEffect(() => {
     (async () => {
       try {
-        const user = await AsyncStorage.getItem("user");
+        const user = await AsyncStorage.getItem('user');
         setCurrentUser(user ? JSON.parse(user) : null);
       } catch (err) {}
     })();
@@ -57,29 +58,32 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   useEffect(() => {
     axios
-      .get("https://localhost:44336/api/restaurants", {
-        params: {
-          SearchValue: searchTerm,
-          Date: "08/06/21", //date.toLocaleDateString(),
-          Time: "9:0", //`${time.getHours()}:${time.getMinutes()}`,
-          Guests: guestsNumber,
-          PageNumber: 1,
-        },
-      })
+      .get(
+        'https://placeholder-reservations.azurewebsites.net/api/restaurants',
+        {
+          params: {
+            SearchValue: searchTerm,
+            Date: '08/06/21', //date.toLocaleDateString(),
+            Time: '9:0', //`${time.getHours()}:${time.getMinutes()}`,
+            Guests: guestsNumber,
+            PageNumber: 1,
+          },
+        }
+      )
       .then(({ data }) => {
         setAvailableRestaurants(data.availableRestaurantsToShow);
         setRecentRestaurants(data.recentRestaurants);
-        setError("");
+        setError('');
       })
-      .catch((err) => {
+      .catch(err => {
         if (err.response) {
           if (err.response.data) {
             setError(err.response.data.title);
           } else {
-            setError("Something went wrong");
+            setError('Something went wrong');
           }
         } else {
-          setError("Check the network connection");
+          setError('Check the network connection');
         }
       });
   }, [date, time, guestsNumber, searchTerm]);
@@ -93,11 +97,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         paragraph={phone}
         uri={
           photos[0] ||
-          "https://nastaran.azurewebsites.net/Uploads/Default/2ec96de6-a3e0-4d17-aec1-208e6c03cfd3.png"
+          'https://nastaran.azurewebsites.net/Uploads/Default/2ec96de6-a3e0-4d17-aec1-208e6c03cfd3.png'
         }
-        btnTitle="Make a reservation"
+        btnTitle='Make a reservation'
         onPress={() =>
-          navigation.navigate("Restaurant", {
+          navigation.navigate('Restaurant', {
             date,
             guestsNumber: parseInt(guestsNumber),
             restaurant: item,
@@ -110,48 +114,50 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <UserStatus currentUser={currentUser} navigation={navigation} />
-      <View>
-        <Text>Make a reservation now</Text>
-        <DateTimePicker mode="date" initialValue={date} setValue={setDate} />
-        <DateTimePicker mode="time" initialValue={time} setValue={setTime} />
-        <TextInput
-          value={guestsNumber}
-          onChangeText={setGuestsNumber}
-        ></TextInput>
-        <SearchBar
-          placeholder="Location or Name"
-          onChange={setSearchTerm}
-          value={searchTerm}
-          icon="magnify"
-        />
-      </View>
-      <View>
-        <Text>{date.toLocaleDateString()}</Text>
-        <Text>{`${time.getHours()}:${time.getMinutes()}`}</Text>
-        <Text>{guestsNumber}</Text>
-        {error ? (
-          <Text>{error}</Text>
-        ) : (
-          <>
-            <SafeAreaView>
-              <FlatList
-                data={availableRestaurants}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()}
-              />
-            </SafeAreaView>
-            <Text>Recently-added Restaurants:</Text>
-            <SafeAreaView>
-              <FlatList
-                data={recentRestaurants}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()}
-              />
-            </SafeAreaView>
-          </>
-        )}
-      </View>
+        <UserStatus currentUser={currentUser} navigation={navigation} />
+        <View>
+          <Text>Make a reservation now</Text>
+          <DateTimePicker mode='date' initialValue={date} setValue={setDate} />
+          <DateTimePicker mode='time' initialValue={time} setValue={setTime} />
+          <TextInput
+            value={guestsNumber}
+            onChangeText={setGuestsNumber}
+            ></TextInput>
+          <SearchBar
+            placeholder='Location or Name'
+            onChange={setSearchTerm}
+            value={searchTerm}
+            icon='magnify'
+            />
+        </View>
+          <ScrollView>
+        <View>
+          <Text>{date.toLocaleDateString()}</Text>
+          <Text>{`${time.getHours()}:${time.getMinutes()}`}</Text>
+          <Text>{guestsNumber}</Text>
+          {error ? (
+            <Text>{error}</Text>
+          ) : (
+            <>
+              <SafeAreaView>
+                <FlatList
+                  data={availableRestaurants}
+                  renderItem={renderItem}
+                  keyExtractor={item => item.id.toString()}
+                />
+              </SafeAreaView>
+              <Text>Recently-added Restaurants:</Text>
+              <SafeAreaView>
+                <FlatList
+                  data={recentRestaurants}
+                  renderItem={renderItem}
+                  keyExtractor={item => item.id.toString()}
+                />
+              </SafeAreaView>
+            </>
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -159,7 +165,5 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
 });

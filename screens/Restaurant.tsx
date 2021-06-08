@@ -1,8 +1,8 @@
-import { RouteProp } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import axios from "axios";
-import moment from "moment";
-import React, { useState, useEffect } from "react";
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import axios from 'axios';
+import moment from 'moment';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,13 +10,14 @@ import {
   TextInput,
   FlatList,
   SafeAreaView,
-} from "react-native";
-import { DateTimePicker, Button, UserStatus } from "../components";
-import { RootStackParamList } from "../navigation";
+  ScrollView,
+} from 'react-native';
+import { DateTimePicker, Button, UserStatus } from '../components';
+import { RootStackParamList } from '../navigation';
 
 type RestaurantScreenProps = {
-  navigation: StackNavigationProp<RootStackParamList, "Restaurant">;
-  route: RouteProp<RootStackParamList, "Restaurant">;
+  navigation: StackNavigationProp<RootStackParamList, 'Restaurant'>;
+  route: RouteProp<RootStackParamList, 'Restaurant'>;
 };
 
 type Availability = {
@@ -44,30 +45,33 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
     passedGuestsNumber.toString()
   );
   const [availabilities, setAvailabilities] = useState<Availability[]>([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   useEffect(() => {
     axios
-      .get(`https://localhost:44336/api/restaurants/${id}/availabilities`, {
-        params: {
-          SelectedDate: "07/06/21", //date.toLocaleDateString(),
-          Guests: guestsNumber,
-          Duration: 90,
-        },
-      })
+      .get(
+        `https://placeholder-reservations.azurewebsites.net/api/restaurants/${id}/availabilities`,
+        {
+          params: {
+            SelectedDate: '07/06/21', //date.toLocaleDateString(),
+            Guests: guestsNumber,
+            Duration: 90,
+          },
+        }
+      )
       .then(({ data }) => {
         setAvailabilities(data);
-        setError("");
+        setError('');
       })
-      .catch((err) => {
+      .catch(err => {
         if (err.response) {
           if (err.response.data) {
             setError(err.response.data.title);
           } else {
-            setError("Something went wrong");
+            setError('Something went wrong');
           }
         } else {
-          setError("Check the network connection");
+          setError('Check the network connection');
         }
       });
   }, [date, guestsNumber]);
@@ -81,61 +85,63 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
       name,
       id,
     } = item;
+    console.log(startTime);
+    console.log(moment(new Date(startTime)).format('HH:mm:ss'));
     return (
       <Button
-        mode="contained"
+        mode='contained'
         onPress={() => {
-          navigation.navigate("Booking", {
+          navigation.navigate('Booking', {
             sittingId: id,
             guests: parseInt(guestsNumber),
             selectedDate: date,
-            selectedTime: moment(new Date(startTime)).format("HH:mm:ss"),
+            selectedTime: moment(new Date(startTime)).format('HH:mm:ss'),
             currentUser,
           });
         }}
       >
-        <Text>{moment(new Date(startTime)).format("HH:mm A")}</Text>
+        <Text>{moment(new Date(startTime)).format('HH:mm A')}</Text>
       </Button>
     );
   };
 
   return (
     <View style={styles.container}>
-      <UserStatus currentUser={currentUser} navigation={navigation} />
-      <View>
-        <Text>{name}</Text>
-        <Text>{address}</Text>
-        <Text>{phone}</Text>
-        <Text>{email}</Text>
-        <DateTimePicker mode="date" initialValue={date} setValue={setDate} />
-        <TextInput
-          value={guestsNumber}
-          onChangeText={setGuestsNumber}
-        ></TextInput>
-      </View>
-      <View>
-        <Text>{date.toLocaleDateString()}</Text>
-        <Text>{guestsNumber}</Text>
-      </View>
-      {error ? (
-        <Text>{error}</Text>
-      ) : (
-        <SafeAreaView>
-          <FlatList
-            data={availabilities}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.startTime}
-          />
-        </SafeAreaView>
-      )}
+      <ScrollView>
+        <UserStatus currentUser={currentUser} navigation={navigation} />
+        <View>
+          <Text>{name}</Text>
+          <Text>{address}</Text>
+          <Text>{phone}</Text>
+          <Text>{email}</Text>
+          <DateTimePicker mode='date' initialValue={date} setValue={setDate} />
+          <TextInput
+            value={guestsNumber}
+            onChangeText={setGuestsNumber}
+          ></TextInput>
+        </View>
+        <View>
+          <Text>{date.toLocaleDateString()}</Text>
+          <Text>{guestsNumber}</Text>
+        </View>
+        {error ? (
+          <Text>{error}</Text>
+        ) : (
+          <SafeAreaView>
+            <FlatList
+              data={availabilities}
+              renderItem={renderItem}
+              keyExtractor={item => item.startTime}
+            />
+          </SafeAreaView>
+        )}
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    flex: 1,    
   },
 });
