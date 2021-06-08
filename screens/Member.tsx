@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, DatePickerIOSComponent, Platform, ViewBase } from 'react-native';
 import { StackNavigationProp } from "@react-navigation/stack";
 import { List } from 'react-native-paper';
 import moment from 'moment';
 
-import { ActivityIndicator, Button, DateTimePicker, Dialog, Paragraph, TextInput } from '../components';
+import { ActivityIndicator, Button, Dialog, Paragraph, Subheading, TextInput } from '../components';
 import { getAllReservations, getReservationById, requestUpdate } from '../services/memberReservations';
 import { RootStackParamList } from "../navigation";
+
+import DateTimePicker from '@react-native-community/datetimepicker';
+
+type Reservation = {
+  duration: number;
+  email: string;
+  guests: number;
+  id: number;
+  notes: string;
+  startTime: Date;
+  phone: string;
+}
 
 type MemberScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, "Member">;
@@ -26,7 +38,31 @@ export const MemberScreen: React.FC<MemberScreenProps> = ({ navigation }) => {
   const[id, setId] = useState("");
   const[notes, setNotes] = useState("");
   const[phone, setPhone] = useState("");
-  const[startTime, setStartTime] = useState("");
+  const[startTime, setStartTime] = useState(new Date());
+
+  //datetime picker
+  const [mode, setMode] = useState<any>('date');
+  const [show, setShow] = useState(false);
+
+  const onChange = (event:any, selectedDate:any) => {
+    const currentDate = selectedDate || startTime;
+    setShow(Platform.OS === 'ios');
+    setStartTime(currentDate);
+  };
+
+  const showMode = (currentMode: any) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+
+  const showTimepicker = () => {
+    showMode('time');
+  };
+  //datetime picker
 
   useEffect(() => {
     setLoading(true);
@@ -43,8 +79,16 @@ export const MemberScreen: React.FC<MemberScreenProps> = ({ navigation }) => {
   }, []); 
 
   const detailsOnPress = (id: number) => {
-    getReservationById(id).then((data: any) => {
+    getReservationById(id).then((data: Reservation) => {
+      console.log(data)
       setDetails(data);
+      setDuration(data.duration.toString());
+      setEmail(data.email);
+      setGuests(data.guests.toString());
+      setId(data.id.toString());
+      setNotes(data.notes);
+      setPhone(data.phone);
+      setStartTime(new Date(data.startTime));
       setVisible(true);
     }).catch(error => {
       alert("Something went wrong.");
@@ -52,15 +96,6 @@ export const MemberScreen: React.FC<MemberScreenProps> = ({ navigation }) => {
   }
 
   const renderReservation = (props : any) => {
-    useEffect(() => {
-      setDuration(props.duration);
-      setEmail(props.email);
-      setGuests(props.guests);
-      setId(props.id);
-      setNotes(props.notes);
-      setPhone(props.phone);
-      setStartTime(props.startTime);
-    },[props]);
     if (props != null && new Date(props.startTime) > new Date()) {
       return (
         <Dialog 
@@ -68,12 +103,27 @@ export const MemberScreen: React.FC<MemberScreenProps> = ({ navigation }) => {
           onDismiss={() => setVisible(false)} 
           title={`Reservation for ${props.restaurantName}`} 
         >
-            <TextInput label="Date" placeholder='Date' value={startTime} onChangeText={startTime => setStartTime(startTime)}/>
-            <TextInput label="Duration" placeholder='Duration' value={duration} onChangeText={duration => setDuration(duration)}/>
-            <TextInput label="Guests" placeholder='Guests' value={guests} onChangeText={guests => setGuests(guests)}/>
-            <TextInput label="Email" placeholder='Email' value={email} onChangeText={email => setEmail(email)}/>
-            <TextInput label="Phone" placeholder='Phone' value={phone} onChangeText={phone => setPhone(phone)}/>
+            <Subheading>Date Time: {moment(startTime).format('DD/MM/YYYY hh:mm a')}</Subheading>
+            <View style={{flexDirection: 'row',}}>
+              <Button onPress={showDatepicker}>Change Date</Button>
+              <Button onPress={showTimepicker}>Change Time</Button>
+            </View>
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={startTime}
+                mode={mode}
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+              />
+            )}
+            <TextInput label="Duration" placeholder='Duration' value={duration} onChangeText={setDuration}/>
+            <TextInput label="Guests" placeholder='Guests' value={guests} onChangeText={setGuests}/>
+            <TextInput label="Email" placeholder='Email' value={email} onChangeText={setEmail}/>
+            <TextInput label="Phone" placeholder='Phone' value={phone} onChangeText={setPhone}/>
             <TextInput label="Notes" placeholder='Notes' editable={false} multiline={true} value={notes}/>
+            <Button mode="outlined" onPress={() => setVisible(false)}>Done</Button>
             <Button mode="outlined" onPress={() => requestOnPress("update")}>Request Update</Button>
             <Button mode="outlined" onPress={() => requestOnPress("cancel")}>Request Cancellation</Button>
         </Dialog>
