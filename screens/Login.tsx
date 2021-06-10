@@ -56,16 +56,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TextInput label="Email" onChangeText={setEmail} />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          label="Password"
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-      </View>
+      <TextInput label="Email" onChangeText={setEmail} />
+
+      <TextInput label="Password" onChangeText={setPassword} secureTextEntry />
+
       <View style={styles.buttonContainer}>
         <Button mode="outlined" onPress={login} loading={loading}>
           Login
@@ -91,9 +85,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-  },
-  inputContainer: {
-    marginVertical: 5,
   },
   buttonContainer: {
     marginVertical: 5,

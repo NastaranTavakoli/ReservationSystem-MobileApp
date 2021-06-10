@@ -2,9 +2,9 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "../screens";
-import { Button } from "../components";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation";
+import { Appbar } from "react-native-paper";
 
 type UserStatusProps = {
   currentUser: User | null;
@@ -19,38 +19,41 @@ export function UserStatus(props: UserStatusProps) {
 
   const logOut = async () => {
     await AsyncStorage.clear();
-    navigation.navigate("Login");
+    navigation.replace("Home");
   };
 
   return (
     <>
       {currentUser ? (
-        <>
-          <Button
-            mode="contained"
+        <Appbar>
+          <Appbar.Content title={`Hi ${currentUser.firstName}!`} />
+          <Appbar.Action
+            icon="account-circle"
             onPress={() => navigation.navigate("Member")}
-          >
-            <Text>{`Hi ${currentUser.firstName}!`}</Text>
-          </Button>
-          <Button mode="contained" onPress={logOut}>
-            <Text>Log Out</Text>
-          </Button>
-        </>
+          />
+
+          <Appbar.Action icon="logout" onPress={logOut} />
+        </Appbar>
       ) : (
-        <View>
-          <Button mode="contained" onPress={() => navigation.navigate("Login")}>
-            <Text>Login</Text>
-          </Button>
-          <Button
-            mode="contained"
+        <Appbar>
+          <Appbar.Content title={`Login or Register`} />
+          <Appbar.Action
+            icon="login"
+            onPress={() => navigation.navigate("Login")}
+          />
+          <Appbar.Action
+            icon="account-plus"
             onPress={() => navigation.navigate("Register")}
-          >
-            <Text>Register</Text>
-          </Button>
-        </View>
+          />
+        </Appbar>
       )}
     </>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+});

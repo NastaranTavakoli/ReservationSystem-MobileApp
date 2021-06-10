@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { DataTable } from "react-native-paper";
-import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 interface TableProps<T> {
   headers: string[];

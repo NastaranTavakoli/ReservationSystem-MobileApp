@@ -1,9 +1,13 @@
 import React, { ReactNode } from "react";
-import { NativeSyntheticEvent, StyleSheet, TextInputFocusEventData } from "react-native";
+import {
+  NativeSyntheticEvent,
+  StyleSheet,
+  TextInputFocusEventData,
+} from "react-native";
 import { TextInput as PaperTextInput } from "react-native-paper";
 
 type TextInputProps = {
-  mode?: 'flat' | 'outlined' | undefined;
+  mode?: "flat" | "outlined" | undefined;
   disabled?: boolean;
   label?: string;
   placeholder?: string;
@@ -25,6 +29,7 @@ export function TextInput({
 }: TextInputProps) {
   return (
     <PaperTextInput
+      theme={{ roundness: 5 }}
       style={styles.input}
       mode={mode}
       disabled={disabled}
@@ -36,5 +41,6 @@ export function TextInput({
 const styles = StyleSheet.create({
   input: {
     width: 300,
+    margin: 5,
   },
 });

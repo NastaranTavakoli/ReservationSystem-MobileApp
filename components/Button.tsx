@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { Button as PaperButton } from "react-native-paper";
 import { IconSource } from "react-native-paper/lib/typescript/components/Icon";
+import { StyleSheet } from "react-native";
 
 type ButtonProps = {
   mode?: "text" | "outlined" | "contained";
@@ -12,9 +13,18 @@ type ButtonProps = {
   onPress: () => void;
 };
 
-export function Button({ mode = 'text', dark = false, loading = false, icon, disabled = false, children, onPress }: ButtonProps) {
+export function Button({
+  mode = "text",
+  dark = false,
+  loading = false,
+  icon,
+  disabled = false,
+  children,
+  onPress,
+}: ButtonProps) {
   return (
-    <PaperButton
+    <PaperButton style ={styles.container}
+      theme={{ roundness: 5 }}
       mode={mode}
       dark={dark}
       loading={loading}
@@ -26,3 +36,9 @@ export function Button({ mode = 'text', dark = false, loading = false, icon, dis
     </PaperButton>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    margin: 1,
+  },
+});

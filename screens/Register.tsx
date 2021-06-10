@@ -84,42 +84,30 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TextInput label="Email" value={email} onChangeText={setEmail} />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          label="First Name"
-          value={firstName}
-          onChangeText={setFirstName}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          label="Last Name"
-          value={lastName}
-          onChangeText={setLastName}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput label="Phone" value={phone} onChangeText={setPhone} />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          label="Confirm Password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
-      </View>
+      <TextInput label="Email" value={email} onChangeText={setEmail} />
+      <TextInput
+        label="First Name"
+        value={firstName}
+        onChangeText={setFirstName}
+      />
+      <TextInput
+        label="Last Name"
+        value={lastName}
+        onChangeText={setLastName}
+      />
+      <TextInput label="Phone" value={phone} onChangeText={setPhone} />
+      <TextInput
+        label="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <TextInput
+        label="Confirm Password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+      />
       <View style={styles.buttonContainer}>
         <Button mode="outlined" onPress={register} loading={loading}>
           Register
@@ -143,9 +131,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-  },
-  inputContainer: {
-    marginVertical: 5,
   },
   buttonContainer: {
     marginVertical: 5,

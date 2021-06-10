@@ -1,21 +1,30 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StackNavigationProp } from '@react-navigation/stack';
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StackNavigationProp } from "@react-navigation/stack";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   FlatList,
   SafeAreaView,
   ScrollView,
-} from 'react-native';
-import { DateTimePicker, SearchBar, Card, UserStatus } from '../components';
-import { RootStackParamList } from '../navigation';
+} from "react-native";
+import { List } from "react-native-paper";
+import {
+  DateTimePicker,
+  SearchBar,
+  Card,
+  UserStatus,
+  TextInput,
+  Title,
+  Button,
+  ActivityIndicator,
+} from "../components";
+import { RootStackParamList } from "../navigation";
 
 type HomeScreenProps = {
-  navigation: StackNavigationProp<RootStackParamList, 'Home'>;
+  navigation: StackNavigationProp<RootStackParamList, "Home">;
 };
 
 export type User = {
@@ -36,54 +45,66 @@ export type Restaurant = {
 };
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
+  let currentDateTime = new Date();
+  currentDateTime.getHours() > 17
+    ? currentDateTime.setDate(currentDateTime.getDate() + 1)
+    : currentDateTime;
+  currentDateTime.getHours() > 17 || currentDateTime.getHours() < 7
+    ? currentDateTime.setHours(9, 0)
+    : currentDateTime;
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(new Date());
-  const [guestsNumber, setGuestsNumber] = useState('2');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [date, setDate] = useState(currentDateTime);
+  const [time, setTime] = useState(currentDateTime);
+  const [expanded, setExpanded] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [guestsNumber, setGuestsNumber] = useState("2");
+  const [searchTerm, setSearchTerm] = useState("");
   const [availableRestaurants, setAvailableRestaurants] = useState<
     Restaurant[]
   >([]);
   const [recentRestaurants, setRecentRestaurants] = useState<Restaurant[]>([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     (async () => {
       try {
-        const user = await AsyncStorage.getItem('user');
+        const user = await AsyncStorage.getItem("user");
         setCurrentUser(user ? JSON.parse(user) : null);
       } catch (err) {}
     })();
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     axios
       .get(
-        'https://placeholder-reservations.azurewebsites.net/api/restaurants',
+        "https://placeholder-reservations.azurewebsites.net/api/restaurants",
         {
           params: {
             SearchValue: searchTerm,
-            Date: '08/06/21', //date.toLocaleDateString(),
-            Time: '9:0', //`${time.getHours()}:${time.getMinutes()}`,
+            Date: "08/06/21", //date.toLocaleDateString(),
+            Time: "9:0", //`${time.getHours()}:${time.getMinutes()}`,
             Guests: guestsNumber,
             PageNumber: 1,
           },
         }
       )
       .then(({ data }) => {
+        setLoading(false);
         setAvailableRestaurants(data.availableRestaurantsToShow);
         setRecentRestaurants(data.recentRestaurants);
-        setError('');
+        setError("");
       })
-      .catch(err => {
+      .catch((err) => {
+        setLoading(false);
         if (err.response) {
           if (err.response.data) {
             setError(err.response.data.title);
           } else {
-            setError('Something went wrong');
+            setError("Something went wrong");
           }
         } else {
-          setError('Check the network connection');
+          setError("Check the network connection");
         }
       });
   }, [date, time, guestsNumber, searchTerm]);
@@ -97,11 +118,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         paragraph={phone}
         uri={
           photos[0] ||
-          'https://nastaran.azurewebsites.net/Uploads/Default/2ec96de6-a3e0-4d17-aec1-208e6c03cfd3.png'
+          "https://nastaran.azurewebsites.net/Uploads/Default/2ec96de6-a3e0-4d17-aec1-208e6c03cfd3.png"
         }
-        btnTitle='Make a reservation'
+        btnTitle="Make a reservation"
         onPress={() =>
-          navigation.navigate('Restaurant', {
+          navigation.navigate("Restaurant", {
             date,
             guestsNumber: parseInt(guestsNumber),
             restaurant: item,
@@ -114,56 +135,95 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-        <UserStatus currentUser={currentUser} navigation={navigation} />
-        <View>
-          <Text>Make a reservation now</Text>
-          <DateTimePicker mode='date' initialValue={date} setValue={setDate} />
-          <DateTimePicker mode='time' initialValue={time} setValue={setTime} />
-          <TextInput
-            value={guestsNumber}
-            onChangeText={setGuestsNumber}
-            ></TextInput>
-          <SearchBar
-            placeholder='Location or Name'
-            onChange={setSearchTerm}
-            value={searchTerm}
-            icon='magnify'
+      <UserStatus currentUser={currentUser} navigation={navigation} />
+      <View style={styles.body}>
+        <View style={styles.header}>
+          <List.Section title="Book Now!">
+            <DateTimePicker
+              mode="date"
+              initialValue={date}
+              setValue={setDate}
             />
+            <DateTimePicker
+              mode="time"
+              initialValue={time}
+              setValue={setTime}
+            />
+            <SearchBar
+              placeholder="Number of guests"
+              onChange={setGuestsNumber}
+              value={guestsNumber}
+              icon="account-multiple"
+            />
+            <SearchBar
+              placeholder="Location/Name"
+              onChange={setSearchTerm}
+              value={searchTerm}
+              icon="magnify"
+            />
+          </List.Section>
         </View>
-          <ScrollView>
-        <View>
-          <Text>{date.toLocaleDateString()}</Text>
-          <Text>{`${time.getHours()}:${time.getMinutes()}`}</Text>
-          <Text>{guestsNumber}</Text>
-          {error ? (
-            <Text>{error}</Text>
-          ) : (
-            <>
-              <SafeAreaView>
-                <FlatList
-                  data={availableRestaurants}
-                  renderItem={renderItem}
-                  keyExtractor={item => item.id.toString()}
-                />
-              </SafeAreaView>
-              <Text>Recently-added Restaurants:</Text>
-              <SafeAreaView>
-                <FlatList
-                  data={recentRestaurants}
-                  renderItem={renderItem}
-                  keyExtractor={item => item.id.toString()}
-                />
-              </SafeAreaView>
-            </>
-          )}
-        </View>
-      </ScrollView>
+        <ScrollView>
+          <View>
+            {/* <Text>{date.toLocaleDateString()}</Text>
+          <Text>{`${time.getHours()}:${time.getMinutes()}`}</Text> */}
+            {error ? (
+              <Text>{error}</Text>
+            ) : (
+              <View>
+                <View style={styles.container}>
+                  <ScrollView>
+                    <List.Accordion
+                      title="Available Restaurants:"
+                      expanded={expanded}
+                      onPress={() => setExpanded(!expanded)}
+                    >
+                      {loading ? (
+                        <ActivityIndicator />
+                      ) : (
+                        <SafeAreaView>
+                          <FlatList
+                            data={availableRestaurants}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id.toString()}
+                          />
+                        </SafeAreaView>
+                      )}
+                    </List.Accordion>
+                    <List.Accordion title="Recently-added Restaurants:">
+                      {loading ? (
+                        <ActivityIndicator />
+                      ) : (
+                        <SafeAreaView>
+                          <FlatList
+                            data={recentRestaurants}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id.toString()}
+                          />
+                        </SafeAreaView>
+                      )}
+                    </List.Accordion>
+                  </ScrollView>
+                </View>
+              </View>
+            )}
+          </View>
+        </ScrollView>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  header: {
+    marginBottom: 20,
+  },
   container: {
     flex: 1,
+    justifyContent: "center",
+  },
+  body: {
+    flex: 1,
+    margin: 20,
   },
 });

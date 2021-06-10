@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { View, Platform } from "react-native";
 import { Button } from "./Button";
 import DateTimePickerCommunity from "@react-native-community/datetimepicker";
+import { TextInput } from "./TextInput";
+import { SearchBar } from "./SearchBar";
+import moment from "moment";
 
 type DateTimePickerProps = {
   mode: "date" | "time";
@@ -22,12 +25,21 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     setValue(currentDate);
   };
 
+  const icon = mode == "date" ? "calendar-range" : "clock-time-five-outline";
+  const value =
+    mode == "date"
+      ? moment(initialValue.toString()).format("Do MMM YYYY")
+      : moment(initialValue.toString()).format("h:mm A");
+
   return (
     <View>
       <View>
-        <Button mode="text" onPress={() => setShow(true)}>
-          {`select ${mode}`}
-        </Button>
+        <SearchBar
+          placeholder={`Select ${mode}`}
+          icon={icon}
+          onPress={() => setShow(true)}
+          value={value}
+        />
       </View>
       {show && (
         <DateTimePickerCommunity
