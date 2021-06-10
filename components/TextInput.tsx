@@ -25,6 +25,7 @@ type TextInputProps = {
 export function TextInput({
   mode = "flat",
   disabled = false,
+
   ...props
 }: TextInputProps) {
   return (
@@ -34,7 +35,7 @@ export function TextInput({
       mode={mode}
       disabled={disabled}
       {...props}
-    />
+    ></PaperTextInput>
   );
 }
 
@@ -42,5 +43,6 @@ const styles = StyleSheet.create({
   input: {
     width: 300,
     margin: 5,
+    maxHeight: 60,
   },
 });
