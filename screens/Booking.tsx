@@ -4,7 +4,14 @@ import axios from "axios";
 import moment from "moment";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Button, Dialog, Modal, TextInput, UserStatus } from "../components";
+import {
+  Button,
+  Dialog,
+  HelperText,
+  Modal,
+  TextInput,
+  UserStatus,
+} from "../components";
 import { RootStackParamList } from "../navigation";
 
 type BookingScreenProps = {
@@ -35,8 +42,12 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
   const [visible, setVisible] = useState(false);
   const [booking, setBooking] = useState<Booking | null>(null);
   const [error, setError] = useState("");
+  const [invalidInput, setInvalidInput] = useState(false);
 
   const onCreateReservation = () => {
+    if (!firstName || !lastName || !email || !phone) {
+      setInvalidInput(true);
+    }
     axios
       .post(
         `https://placeholder-reservations.azurewebsites.net/api/reservations`,
@@ -55,6 +66,7 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
         setBooking(data);
         setVisible(true);
         setError("");
+        setInvalidInput(false);
       })
       .catch((err) => {
         if (err.response) {
@@ -62,9 +74,11 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
             setError(err.response.data.title);
           } else {
             setError("Something went wrong");
+            setInvalidInput(false);
           }
         } else {
           setError("Check the network connection");
+          setInvalidInput(false);
         }
       });
   };
@@ -112,7 +126,18 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
             </View>
           </View>
         </ScrollView>
-        <View>{error ? <Text>{error}</Text> : null}</View>
+        {invalidInput && (
+          <HelperText style={styles.error} type="error" visible={true}>
+            "Please fill out the required fields"
+          </HelperText>
+        )}
+        <View>
+          {error ? (
+            <HelperText style={styles.error} type="error" visible={true}>
+              {error}
+            </HelperText>
+          ) : null}
+        </View>
         {booking && (
           <Modal
             visible={visible}
@@ -139,5 +164,12 @@ const styles = StyleSheet.create({
     marginTop: 50,
     alignItems: "center",
     justifyContent: "center",
+  },
+  error: {
+    backgroundColor: "#EBDAE1",
+    margin: 5,
+    fontWeight: "bold",
+    textAlign: "center",
+    borderRadius: 5,
   },
 });

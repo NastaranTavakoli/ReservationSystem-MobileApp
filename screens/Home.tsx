@@ -10,16 +10,14 @@ import {
   SafeAreaView,
   ScrollView,
 } from "react-native";
-import { List } from "react-native-paper";
+import { List, Title } from "react-native-paper";
 import {
   DateTimePicker,
   SearchBar,
   Card,
   UserStatus,
-  TextInput,
-  Title,
-  Button,
   ActivityIndicator,
+  HelperText,
 } from "../components";
 import { RootStackParamList } from "../navigation";
 
@@ -64,6 +62,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   >([]);
   const [recentRestaurants, setRecentRestaurants] = useState<Restaurant[]>([]);
   const [error, setError] = useState("");
+  const [invalidInput, setInvalidInput] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -76,21 +75,22 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   useEffect(() => {
     setLoading(true);
+    guestsNumber.match(/^[0-9]+$/) == null || guestsNumber == "" 
+      ? setInvalidInput(true)
+      : setInvalidInput(false);
     axios
-      .get(
-        "https://placeholder-reservations.azurewebsites.net/api/restaurants",
-        {
-          params: {
-            SearchValue: searchTerm,
-            Date: "08/06/21", //date.toLocaleDateString(),
-            Time: "9:0", //`${time.getHours()}:${time.getMinutes()}`,
-            Guests: guestsNumber,
-            PageNumber: 1,
-          },
-        }
-      )
+      .get("https://nastaran.azurewebsites.net/api/restaurants", {
+        params: {
+          SearchValue: searchTerm,
+          Date: date.toLocaleDateString(),
+          Time: `${time.getHours()}:${time.getMinutes()}`,
+          Guests: guestsNumber,
+          PageNumber: 1,
+        },
+      })
       .then(({ data }) => {
         setLoading(false);
+        guestsNumber != "" ? setInvalidInput(false) : setInvalidInput(true);
         setAvailableRestaurants(data.availableRestaurantsToShow);
         setRecentRestaurants(data.recentRestaurants);
         setError("");
@@ -137,8 +137,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     <View style={styles.container}>
       <UserStatus currentUser={currentUser} navigation={navigation} />
       <View style={styles.body}>
-        <View style={styles.header}>
-          <List.Section title="Book Now!">
+        <View>
+          <Title style={styles.title}>Book Now!</Title>
+          <List.Section>
             <DateTimePicker
               mode="date"
               initialValue={date}
@@ -167,14 +168,21 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           <View>
             {/* <Text>{date.toLocaleDateString()}</Text>
           <Text>{`${time.getHours()}:${time.getMinutes()}`}</Text> */}
-            {error ? (
-              <Text>{error}</Text>
+            {invalidInput && (
+              <HelperText style={styles.error} type="error" visible={true}>
+                Invalid input for number of guests
+              </HelperText>
+            )}
+            {error && !invalidInput ? (
+              <HelperText style={styles.error} type="error" visible={true}>
+                {error}
+              </HelperText>
             ) : (
               <View>
                 <View style={styles.container}>
                   <ScrollView>
                     <List.Accordion
-                      title="Available Restaurants:"
+                      title="Available Restaurants"
                       expanded={expanded}
                       onPress={() => setExpanded(!expanded)}
                     >
@@ -190,7 +198,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                         </SafeAreaView>
                       )}
                     </List.Accordion>
-                    <List.Accordion title="Recently-added Restaurants:">
+                    <List.Accordion title="New Restaurants">
                       {loading ? (
                         <ActivityIndicator />
                       ) : (
@@ -215,8 +223,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  header: {
-    marginBottom: 20,
+  title: {
+    textAlign: "center",
   },
   container: {
     flex: 1,
@@ -225,5 +233,12 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     margin: 20,
+  },
+  error: {
+    backgroundColor: "#EBDAE1",
+    margin: 5,
+    fontWeight: "bold",
+    textAlign: "center",
+    borderRadius: 5,
   },
 });

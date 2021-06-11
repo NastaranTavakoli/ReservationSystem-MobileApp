@@ -20,6 +20,8 @@ import {
   Table,
   Card,
   Subheading,
+  ActivityIndicator,
+  HelperText,
 } from "../components";
 import { RootStackParamList } from "../navigation";
 
@@ -54,11 +56,17 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
   );
   const [availabilities, setAvailabilities] = useState<Availability[]>([]);
   const [error, setError] = useState("");
+  const [invalidInput, setInvalidInput] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
+    guestsNumber.match(/^[0-9]+$/) == null || guestsNumber == ""
+      ? setInvalidInput(true)
+      : setInvalidInput(false);
     axios
       .get(
-        `https://placeholder-reservations.azurewebsites.net/api/restaurants/${id}/availabilities`,
+        `https://nastaran.azurewebsites.net/api/restaurants/${id}/availabilities`,
         {
           params: {
             SelectedDate: "07/06/21", //date.toLocaleDateString(),
@@ -68,10 +76,13 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
         }
       )
       .then(({ data }) => {
+        setLoading(false);
+        guestsNumber != "" ? setInvalidInput(false) : setInvalidInput(true);
         setAvailabilities(data);
         setError("");
       })
       .catch((err) => {
+        setLoading(false);
         if (err.response) {
           if (err.response.data) {
             setError(err.response.data.title);
@@ -93,8 +104,6 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
       name,
       id,
     } = item;
-    console.log(startTime);
-    console.log(moment(new Date(startTime)).format("HH:mm:ss"));
     return (
       <Button
         mode="contained"
@@ -127,10 +136,8 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
             "https://nastaran.azurewebsites.net/Uploads/Default/2ec96de6-a3e0-4d17-aec1-208e6c03cfd3.png"
           }
         />
-
         <View style={styles.picker}>
           <DateTimePicker mode="date" initialValue={date} setValue={setDate} />
-
           <SearchBar
             placeholder="Number of guests"
             onChange={setGuestsNumber}
@@ -139,16 +146,31 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
           />
         </View>
         <View style={styles.body}>
-          {error ? (
-            <Text>{error}</Text>
+          {invalidInput && (
+            <HelperText style={styles.error} type="error" visible={true}>
+              Invalid input for number of guests
+            </HelperText>
+          )}
+          {error && !invalidInput ? (
+            <HelperText style={styles.error} type="error" visible={true}>
+              {error}
+            </HelperText>
+          ) : loading ? (
+            <ActivityIndicator />
           ) : (
             <SafeAreaView>
-              <Subheading>Available Time Slots:</Subheading>
-              <FlatList
-                data={availabilities}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.startTime}
-              />
+              <Subheading>Available Time Slots</Subheading>
+              {availabilities.length == 0 && !invalidInput ? (
+                <HelperText style={styles.info} type="info" visible={true}>
+                  No availabilities for the selected date
+                </HelperText>
+              ) : (
+                <FlatList
+                  data={availabilities}
+                  renderItem={renderItem}
+                  keyExtractor={(item) => item.startTime}
+                />
+              )}
             </SafeAreaView>
           )}
         </View>
@@ -170,5 +192,19 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 20,
     marginTop: 5,
+  },
+  error: {
+    backgroundColor: "#EBDAE1",
+    margin: 5,
+    fontWeight: "bold",
+    textAlign: "center",
+    borderRadius: 5,
+  },
+  info: {
+    backgroundColor: "#EBDAE1",
+    margin: 5,
+    fontWeight: "bold",
+    textAlign: "center",
+    borderRadius: 5,
   },
 });

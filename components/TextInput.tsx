@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import {
   NativeSyntheticEvent,
   StyleSheet,
@@ -25,7 +25,6 @@ type TextInputProps = {
 export function TextInput({
   mode = "flat",
   disabled = false,
-
   ...props
 }: TextInputProps) {
   return (
