@@ -11,15 +11,13 @@ import {
   SafeAreaView,
   ScrollView,
 } from "react-native";
+import { List } from "react-native-paper";
 import {
   DateTimePicker,
   Button,
   UserStatus,
-  TextInput,
   SearchBar,
-  Table,
   Card,
-  Subheading,
   ActivityIndicator,
   HelperText,
 } from "../components";
@@ -32,11 +30,13 @@ type RestaurantScreenProps = {
 
 type Availability = {
   startTime: string;
-  sittingStartTime: string;
-  sittingEndTime: string;
-  description: string;
-  name: string;
-  id: number;
+  sittingId: number;
+};
+
+type Sitting = {
+  availabilities: Availability[];
+  shortDescription: string;
+  sittingId: number;
 };
 
 export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
@@ -54,10 +54,11 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
   const [guestsNumber, setGuestsNumber] = useState(
     passedGuestsNumber.toString()
   );
-  const [availabilities, setAvailabilities] = useState<Availability[]>([]);
+  const [sittings, setSittings] = useState<Sitting[]>([]);
   const [error, setError] = useState("");
   const [invalidInput, setInvalidInput] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [expandedIndex, setExpandedIndex] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -69,16 +70,16 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
         `https://nastaran.azurewebsites.net/api/restaurants/${id}/availabilities`,
         {
           params: {
-            SelectedDate: "07/06/21", //date.toLocaleDateString(),
+            SelectedDate: moment(date).format("MM-DD-YYYY"),
             Guests: guestsNumber,
             Duration: 90,
           },
         }
       )
       .then(({ data }) => {
-        setLoading(false);
         guestsNumber != "" ? setInvalidInput(false) : setInvalidInput(true);
-        setAvailabilities(data);
+        setSittings(data);
+        setLoading(false);
         setError("");
       })
       .catch((err) => {
@@ -96,24 +97,18 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
   }, [date, guestsNumber]);
 
   const renderItem = ({ item }: { item: Availability }) => {
-    const {
-      startTime,
-      sittingStartTime,
-      sittingEndTime,
-      description,
-      name,
-      id,
-    } = item;
+    const { startTime } = item;
     return (
       <Button
         mode="contained"
         onPress={() => {
           navigation.navigate("Booking", {
-            sittingId: id,
+            sittingId: item.sittingId,
             guests: parseInt(guestsNumber),
             selectedDate: date,
             selectedTime: moment(startTime).format("HH:mm:ss"),
             currentUser,
+            restaurantName: name,
           });
         }}
       >
@@ -159,17 +154,35 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
             <ActivityIndicator />
           ) : (
             <SafeAreaView>
-              <Subheading>Available Time Slots</Subheading>
-              {availabilities.length == 0 && !invalidInput ? (
+              {sittings.length == 0 && !invalidInput ? (
                 <HelperText style={styles.info} type="info" visible={true}>
                   No availabilities for the selected date
                 </HelperText>
               ) : (
-                <FlatList
-                  data={availabilities}
-                  renderItem={renderItem}
-                  keyExtractor={(item) => item.startTime}
-                />
+                <View>
+                  {sittings.map((s, index) => {
+                    return (
+                      <List.Accordion
+                        title={s.shortDescription}
+                        key={index}
+                        expanded={expandedIndex === index}
+                        onPress={() =>
+                          expandedIndex === index
+                            ? setExpandedIndex(-1)
+                            : setExpandedIndex(index)
+                        }
+                      >
+                        <SafeAreaView>
+                          <FlatList
+                            data={s.availabilities}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.startTime}
+                          />
+                        </SafeAreaView>
+                      </List.Accordion>
+                    );
+                  })}
+                </View>
               )}
             </SafeAreaView>
           )}

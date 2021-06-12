@@ -4,11 +4,13 @@ import axios from "axios";
 import moment from "moment";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { Title } from "react-native-paper";
 import {
   Button,
   Dialog,
   HelperText,
   Modal,
+  Subheading,
   TextInput,
   UserStatus,
 } from "../components";
@@ -31,8 +33,14 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
   navigation,
   route,
 }) => {
-  const { sittingId, guests, selectedDate, selectedTime, currentUser } =
-    route.params;
+  const {
+    sittingId,
+    guests,
+    selectedDate,
+    selectedTime,
+    currentUser,
+    restaurantName,
+  } = route.params;
 
   const [firstName, setFirstName] = useState(currentUser?.firstName || "");
   const [lastName, setLastName] = useState(currentUser?.lastName || "");
@@ -48,20 +56,18 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
     if (!firstName || !lastName || !email || !phone) {
       setInvalidInput(true);
     }
+    console.log(moment(selectedDate).format("MM-DD-YYYY"));
     axios
-      .post(
-        `https://placeholder-reservations.azurewebsites.net/api/reservations`,
-        {
-          firstName,
-          lastName,
-          email,
-          phone,
-          sittingId,
-          guests,
-          selectedDate: selectedDate.toLocaleDateString(),
-          selectedTime,
-        }
-      )
+      .post(`https://nastaran.azurewebsites.net/api/reservations`, {
+        firstName,
+        lastName,
+        email,
+        phone,
+        sittingId,
+        guests,
+        selectedDate: moment(selectedDate).format("MM-DD-YYYY"),
+        selectedTime,
+      })
       .then(({ data }) => {
         setBooking(data);
         setVisible(true);
@@ -94,6 +100,13 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
       <View style={styles.container}>
         <ScrollView>
           <View>
+            <View style={styles.header}>
+              <Title>{`Reservation for ${restaurantName}`}</Title>
+              <Subheading>{`Date : ${moment(selectedDate).format(
+                "DD/MM/YYYY"
+              )}`}</Subheading>
+            </View>
+
             <TextInput
               value={firstName}
               onChangeText={setFirstName}
@@ -145,11 +158,9 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
             title={`Reservation for restaurant ${booking.name}`}
             paragraph={`Date and Time: ${moment(booking.startTime).format(
               "Do MMM YYYY, h:mm a"
-            )}\n
-          Guests: ${booking.guests}\n
-          Name: ${booking.fullName}\n
-          Confirmation Code: ${booking.confirmationCode}\n
-          `}
+            )}\nGuests: ${booking.guests}\nName: ${
+              booking.fullName
+            }\nConfirmation Code: ${booking.confirmationCode}\n`}
             onPress={hideModal}
             text="Done"
           ></Modal>
@@ -162,6 +173,11 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginTop: 50,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  header: {
+    marginBottom: 30,
     alignItems: "center",
     justifyContent: "center",
   },

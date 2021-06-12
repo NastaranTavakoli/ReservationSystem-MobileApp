@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import axios from "axios";
+import moment from "moment";
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -47,9 +48,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   currentDateTime.getHours() > 17
     ? currentDateTime.setDate(currentDateTime.getDate() + 1)
     : currentDateTime;
-  currentDateTime.getHours() > 17 || currentDateTime.getHours() < 7
-    ? currentDateTime.setHours(9, 0)
-    : currentDateTime;
+  currentDateTime.setHours(19, 0);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [date, setDate] = useState(currentDateTime);
   const [time, setTime] = useState(currentDateTime);
@@ -75,14 +74,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   useEffect(() => {
     setLoading(true);
-    guestsNumber.match(/^[0-9]+$/) == null || guestsNumber == "" 
+    guestsNumber.match(/^[0-9]+$/) == null || guestsNumber == ""
       ? setInvalidInput(true)
       : setInvalidInput(false);
     axios
       .get("https://nastaran.azurewebsites.net/api/restaurants", {
         params: {
           SearchValue: searchTerm,
-          Date: date.toLocaleDateString(),
+          Date: moment(date).format("MM-DD-YYYY"),
           Time: `${time.getHours()}:${time.getMinutes()}`,
           Guests: guestsNumber,
           PageNumber: 1,

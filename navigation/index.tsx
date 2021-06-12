@@ -29,6 +29,7 @@ export type RootStackParamList = {
     guests: number;
     selectedDate: Date;
     selectedTime: string;
+    restaurantName : string;
   };
 };
 
