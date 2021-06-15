@@ -78,7 +78,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       ? setInvalidInput(true)
       : setInvalidInput(false);
     axios
-      .get("https://nastaran.azurewebsites.net/api/restaurants", {
+      .get("https://placeholder-reservations.azurewebsites.net/api/restaurants", {
         params: {
           SearchValue: searchTerm,
           Date: moment(date).format("MM-DD-YYYY"),

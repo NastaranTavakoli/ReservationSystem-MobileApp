@@ -67,7 +67,7 @@ export const RestaurantScreen: React.FC<RestaurantScreenProps> = ({
       : setInvalidInput(false);
     axios
       .get(
-        `https://nastaran.azurewebsites.net/api/restaurants/${id}/availabilities`,
+        `https://placeholder-reservations.azurewebsites.net/api/restaurants/${id}/availabilities`,
         {
           params: {
             SelectedDate: moment(date).format("MM-DD-YYYY"),
