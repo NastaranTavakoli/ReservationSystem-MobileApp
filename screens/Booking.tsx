@@ -58,7 +58,7 @@ export const BookingScreen: React.FC<BookingScreenProps> = ({
     }
     console.log(moment(selectedDate).format("MM-DD-YYYY"));
     axios
-      .post(`https://nastaran.azurewebsites.net/api/reservations`, {
+      .post(`https://placeholder-reservations.azurewebsites.net/api/reservations`, {
         firstName,
         lastName,
         email,

@@ -88,7 +88,7 @@ export const MemberScreen: React.FC<MemberScreenProps> = ({ navigation }) => {
       setId(data.id.toString());
       setNotes(data.notes);
       setPhone(data.phone);
-      setStartTime(new Date(data.startTime));
+      setStartTime(data.startTime);
       setVisible(true);
     }).catch(error => {
       alert("Something went wrong.");
@@ -109,7 +109,7 @@ export const MemberScreen: React.FC<MemberScreenProps> = ({ navigation }) => {
               <Button onPress={showTimepicker}>Change Time</Button>
             </View>
             {show && (
-              <DateTimePicker testID="dateTimePicker" value={startTime} mode={mode} is24Hour={true} display="default" onChange={onChange} />
+              <DateTimePicker testID="dateTimePicker" value={moment(startTime).toDate()} mode={mode} is24Hour={true} display="default" onChange={onChange} />
             )}
             <TextInput label="Duration" placeholder='Duration' value={duration} onChangeText={setDuration}/>
             <TextInput label="Guests" placeholder='Guests' value={guests} onChangeText={setGuests}/>
